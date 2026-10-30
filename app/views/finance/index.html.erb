@@ -1,0 +1,35 @@
+<h1>Финансы</h1>
+<p><%= link_to "+ Добавить транзакцию", finance_new_path %></p>
+
+<div class="balance">
+  <h2>Баланс: <%= number_to_currency(@balance, unit: "₽", precision: 0) %></h2>
+</div>
+
+<h3>Последние транзакции</h3>
+<% if @transactions.any? %>
+  <ul>
+    <% @transactions.each do |t| %>
+      <li>
+        <%= t.date.strftime("%d.%m.%Y") %> —
+        <%= t.category %>:
+        <%= number_to_currency(t.amount, unit: "₽", precision: 0) %>
+        (<%= t.transaction_type == 'income' ? 'доход' : 'расход' %>)
+      </li>
+    <% end %>
+  </ul>
+<% else %>
+  <p>Пока нет транзакций.</p>
+<% end %>
+
+<h3>Расходы по категориям</h3>
+<% if @expenses_by_category.any? %>
+  <ul>
+    <% @expenses_by_category.each do |cat, amount| %>
+      <li><%= cat %>: <%= number_to_currency(amount, unit: "₽", precision: 0) %></li>
+    <% end %>
+  </ul>
+<% else %>
+  <p>Нет расходов.</p>
+<% end %>
+
+<p><%= link_to "На главную", dashboard_path %></p>

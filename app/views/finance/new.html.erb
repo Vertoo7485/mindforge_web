@@ -1,0 +1,40 @@
+<h1>Новая транзакция</h1>
+
+<%= form_with model: @transaction, url: finance_path, local: true do |f| %>
+  <% if @transaction.errors.any? %>
+    <div class="errors">
+      <% @transaction.errors.full_messages.each do |msg| %>
+        <p><%= msg %></p>
+      <% end %>
+    </div>
+  <% end %>
+
+  <div>
+    <%= f.label :transaction_type, "Тип" %>
+    <%= f.select :transaction_type, [["Доход", "income"], ["Расход", "expense"]] %>
+  </div>
+
+  <div>
+    <%= f.label :amount, "Сумма" %>
+    <%= f.number_field :amount, step: 0.01 %>
+  </div>
+
+  <div>
+    <%= f.label :category, "Категория" %>
+    <%= f.text_field :category %>
+  </div>
+
+  <div>
+    <%= f.label :date, "Дата" %>
+    <%= f.date_field :date, value: Date.today %>
+  </div>
+
+  <div>
+    <%= f.label :note, "Заметка" %>
+    <%= f.text_area :note %>
+  </div>
+
+  <%= f.submit "Добавить" %>
+<% end %>
+
+<p><%= link_to "Назад", finance_path %></p>
