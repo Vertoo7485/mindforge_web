@@ -1,40 +1,44 @@
 <h1>Новая транзакция</h1>
 
-<%= form_with model: @transaction, url: finance_path, local: true do |f| %>
-  <% if @transaction.errors.any? %>
-    <div class="errors">
-      <% @transaction.errors.full_messages.each do |msg| %>
-        <p><%= msg %></p>
-      <% end %>
+<div class="card">
+  <%= form_with model: @transaction, url: finance_path, local: true do |f| %>
+    <% if @transaction.errors.any? %>
+      <div class="errors">
+        <% @transaction.errors.full_messages.each do |msg| %>
+          <p><%= msg %></p>
+        <% end %>
+      </div>
+    <% end %>
+
+    <div class="form-group">
+      <%= f.label :transaction_type, "Тип" %>
+      <%= f.select :transaction_type, [["Доход", "income"], ["Расход", "expense"]] %>
     </div>
+
+    <div class="form-group">
+      <%= f.label :amount, "Сумма (₽)" %>
+      <%= f.number_field :amount, step: 0.01, placeholder: "0" %>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :category, "Категория" %>
+      <%= f.text_field :category, placeholder: "Например: Продукты" %>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :date, "Дата" %>
+      <%= f.date_field :date, value: Date.today %>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :note, "Заметка" %>
+      <%= f.text_area :note, rows: 2, placeholder: "Необязательно" %>
+    </div>
+
+    <%= f.submit "Добавить", class: "btn btn-block" %>
   <% end %>
+</div>
 
-  <div>
-    <%= f.label :transaction_type, "Тип" %>
-    <%= f.select :transaction_type, [["Доход", "income"], ["Расход", "expense"]] %>
-  </div>
-
-  <div>
-    <%= f.label :amount, "Сумма" %>
-    <%= f.number_field :amount, step: 0.01 %>
-  </div>
-
-  <div>
-    <%= f.label :category, "Категория" %>
-    <%= f.text_field :category %>
-  </div>
-
-  <div>
-    <%= f.label :date, "Дата" %>
-    <%= f.date_field :date, value: Date.today %>
-  </div>
-
-  <div>
-    <%= f.label :note, "Заметка" %>
-    <%= f.text_area :note %>
-  </div>
-
-  <%= f.submit "Добавить" %>
-<% end %>
-
-<p><%= link_to "Назад", finance_path %></p>
+<div style="margin-top: 16px;">
+  <%= link_to "← Назад", finance_path, class: "btn btn-secondary btn-block" %>
+</div>

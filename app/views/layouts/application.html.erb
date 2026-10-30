@@ -1,18 +1,49 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>MindforgeWeb</title>
+    <title>Mind Forge</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=MedievalSharp&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
-
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
 
   <body>
-    <p class="notice"><%= notice %></p>
-    <p class="alert"><%= alert %></p>
-    <%= yield %>
+    <div class="container">
+      <% if notice %>
+        <div class="flash notice"><%= notice %></div>
+      <% end %>
+      <% if alert %>
+        <div class="flash alert"><%= alert %></div>
+      <% end %>
+
+      <%= yield %>
+    </div>
+
+    <% if user_signed_in? %>
+      <nav class="bottom-nav">
+        <%= link_to dashboard_path, class: "nav-item #{'active' if current_page?(dashboard_path)}" do %>
+          <span class="nav-rune">ᚠ</span>
+          <span>Дом</span>
+        <% end %>
+        <%= link_to finance_path, class: "nav-item #{'active' if current_page?(finance_path)}" do %>
+          <span class="nav-rune">ᛟ</span>
+          <span>Казна</span>
+        <% end %>
+        <a href="#" class="nav-item">
+          <span class="nav-rune">ᚨ</span>
+          <span>План</span>
+        </a>
+        <a href="#" class="nav-item">
+          <span class="nav-rune">ᛏ</span>
+          <span>Герой</span>
+        </a>
+      </nav>
+    <% end %>
   </body>
 </html>

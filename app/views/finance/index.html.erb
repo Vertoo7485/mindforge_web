@@ -1,35 +1,48 @@
 <h1>Финансы</h1>
-<p><%= link_to "+ Добавить транзакцию", finance_new_path %></p>
 
-<div class="balance">
-  <h2>Баланс: <%= number_to_currency(@balance, unit: "₽", precision: 0) %></h2>
+<div class="card balance-card">
+  <div class="balance-label">Баланс казны</div>
+  <div class="balance-amount"><%= number_to_currency(@balance, unit: "₽", precision: 0) %></div>
+</div>
+
+<div style="margin-bottom: 16px;">
+  <%= link_to "+ Добавить транзакцию", finance_new_path, class: "btn btn-block" %>
 </div>
 
 <h3>Последние транзакции</h3>
 <% if @transactions.any? %>
-  <ul>
+  <div class="card">
     <% @transactions.each do |t| %>
-      <li>
-        <%= t.date.strftime("%d.%m.%Y") %> —
-        <%= t.category %>:
-        <%= number_to_currency(t.amount, unit: "₽", precision: 0) %>
-        (<%= t.transaction_type == 'income' ? 'доход' : 'расход' %>)
-      </li>
+      <div class="transaction-item">
+        <div class="transaction-info">
+          <div class="transaction-category"><%= t.category %></div>
+          <div class="transaction-date"><%= t.date.strftime("%d.%m.%Y") %></div>
+        </div>
+        <div class="transaction-amount <%= t.transaction_type %>">
+          <%= t.transaction_type == 'income' ? '+' : '−' %>
+          <%= number_to_currency(t.amount, unit: "₽", precision: 0) %>
+        </div>
+      </div>
     <% end %>
-  </ul>
+  </div>
 <% else %>
-  <p>Пока нет транзакций.</p>
+  <div class="card">
+    <p style="color: var(--text-muted);">Пока нет транзакций. Добавьте первую!</p>
+  </div>
 <% end %>
 
 <h3>Расходы по категориям</h3>
 <% if @expenses_by_category.any? %>
-  <ul>
+  <div class="card">
     <% @expenses_by_category.each do |cat, amount| %>
-      <li><%= cat %>: <%= number_to_currency(amount, unit: "₽", precision: 0) %></li>
+      <div class="transaction-item">
+        <div class="transaction-category"><%= cat %></div>
+        <div class="transaction-amount expense"><%= number_to_currency(amount, unit: "₽", precision: 0) %></div>
+      </div>
     <% end %>
-  </ul>
+  </div>
 <% else %>
-  <p>Нет расходов.</p>
+  <div class="card">
+    <p style="color: var(--text-muted);">Нет расходов.</p>
+  </div>
 <% end %>
-
-<p><%= link_to "На главную", dashboard_path %></p>
