@@ -1,0 +1,44 @@
+<h1>Бюджеты</h1>
+
+<div style="margin-bottom: 16px;">
+  <%= link_to "+ Новый бюджет", new_budget_path, class: "btn btn-block" %>
+</div>
+
+<% if @budgets.any? %>
+  <div class="card">
+    <% @budgets.each do |b| %>
+      <div class="transaction-item">
+        <div class="transaction-info">
+          <div class="transaction-category"><%= b.category %></div>
+          <div class="transaction-date">
+            <%= b.period == 'monthly' ? 'В месяц' : 'В неделю' %> · 
+            потрачено: <%= number_to_currency(@month_expenses[b.category] || 0, unit: "₽", precision: 0) %>
+          </div>
+          <% spent = @month_expenses[b.category] || 0 %>
+          <% percent = [(spent / b.amount * 100).round, 100].min %>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: <%= percent %>%; background: <%= percent > 90 ? 'var(--red)' : percent > 70 ? 'var(--amber)' : 'var(--green)' %>;"></div>
+          </div>
+          <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">
+            <%= spent.to_i %> / <%= b.amount.to_i %> ₽ (<%= percent %>%)
+          </div>
+        </div>
+        <div class="transaction-actions">
+          <%= link_to "✎", edit_budget_path(b), class: "action-btn" %>
+          <%= button_to "✕", budget_path(b), method: :delete, 
+              class: "action-btn delete", 
+              form: { style: "display: inline;" },
+              data: { confirm: "Удалить бюджет?" } %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% else %>
+  <div class="card">
+    <p style="color: var(--text-muted);">Нет бюджетов. Установите лимит на категорию, чтобы контролировать траты.</p>
+  </div>
+<% end %>
+
+<div style="margin-top: 16px;">
+  <%= link_to "← Назад к финансам", finance_path, class: "btn btn-secondary btn-block" %>
+</div>

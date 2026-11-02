@@ -1,5 +1,9 @@
 <h1>Финансы</h1>
 
+<div style="display: flex; gap: 8px; margin-bottom: 16px;">
+  <%= link_to "Бюджеты", budgets_path, class: "btn btn-secondary", style: "flex: 1;" %>
+</div>
+
 <div class="card balance-card">
   <div class="balance-label">Баланс казны</div>
   <div class="balance-amount"><%= number_to_currency(@balance, unit: "₽", precision: 0) %></div>
