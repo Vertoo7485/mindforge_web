@@ -1,0 +1,62 @@
+<h1>Цели накопления</h1>
+
+<div style="margin-bottom: 16px;">
+  <%= link_to "+ Новая цель", new_savings_goal_path, class: "btn btn-block" %>
+</div>
+
+<% if @goals.any? %>
+  <% @goals.each do |goal| %>
+    <div class="card">
+      <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
+        <div style="display: flex; gap: 12px; align-items: center;">
+          <div style="font-size: 32px;"><%= goal.icon.presence || '🎯' %></div>
+          <div>
+            <div class="transaction-category" style="font-size: 18px;"><%= goal.title %></div>
+            <% if goal.deadline %>
+              <div class="transaction-date">до <%= goal.deadline.strftime("%d.%m.%Y") %></div>
+            <% end %>
+          </div>
+        </div>
+        <div class="transaction-actions">
+          <%= link_to "✎", edit_savings_goal_path(goal), class: "action-btn" %>
+          <%= button_to "✕", savings_goal_path(goal), method: :delete, 
+              class: "action-btn delete", 
+              form: { style: "display: inline;" },
+              data: { confirm: "Удалить цель?" } %>
+        </div>
+      </div>
+
+      <div class="progress-bar" style="height: 12px;">
+        <div class="progress-fill" style="width: <%= goal.percent %>%; background: <%= goal.completed? ? 'var(--green)' : 'var(--amber)' %>;"></div>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; margin-top: 8px; font-size: 14px;">
+        <span style="color: var(--text-muted);">
+          <%= number_to_currency(goal.current_amount, unit: "₽", precision: 0) %> 
+          из <%= number_to_currency(goal.target_amount, unit: "₽", precision: 0) %>
+        </span>
+        <span style="color: <%= goal.completed? ? 'var(--green)' : 'var(--amber)' %>; font-weight: bold;">
+          <%= goal.completed? ? '✅ Достигнуто!' : "#{goal.percent}%" %>
+        </span>
+      </div>
+
+      <% if !goal.completed? %>
+        <div style="margin-top: 12px;">
+          <%= form_with url: deposit_savings_goal_path(goal), method: :post, local: true, style: "display: flex; gap: 8px;" do |f| %>
+            <%= number_field_tag :amount, nil, placeholder: "Сумма", step: 0.01, min: 0.01, 
+                style: "flex: 1; padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-gold); border-radius: 10px; color: var(--text);" %>
+            <%= submit_tag "Отложить", class: "btn", style: "padding: 10px 16px;" %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+<% else %>
+  <div class="card">
+    <p style="color: var(--text-muted);">Нет целей. Создайте первую — накопите на мечту!</p>
+  </div>
+<% end %>
+
+<div style="margin-top: 16px;">
+  <%= link_to "← Назад к финансам", finance_path, class: "btn btn-secondary btn-block" %>
+</div>
