@@ -6,33 +6,53 @@
 </div>
 
 <div style="margin-bottom: 16px;">
-  <%= link_to "+ Добавить транзакцию", finance_new_path, class: "btn btn-block" %>
+  <%= link_to "+ Добавить транзакцию", new_transaction_path, class: "btn btn-block" %>
 </div>
 
-<h3>Последние транзакции</h3>
+<!-- Фильтры -->
+<div class="filters">
+  <%= link_to "Всё", finance_path, class: "filter-btn #{'active' if @period == 'all'}" %>
+  <%= link_to "Неделя", finance_path(period: 'week'), class: "filter-btn #{'active' if @period == 'week'}" %>
+  <%= link_to "Месяц", finance_path(period: 'month'), class: "filter-btn #{'active' if @period == 'month'}" %>
+  <%= link_to "Год", finance_path(period: 'year'), class: "filter-btn #{'active' if @period == 'year'}" %>
+</div>
+
+<h3>Транзакции</h3>
 <% if @transactions.any? %>
   <div class="card">
     <% @transactions.each do |t| %>
       <div class="transaction-item">
         <div class="transaction-info">
           <div class="transaction-category"><%= t.category %></div>
-          <div class="transaction-date"><%= t.date.strftime("%d.%m.%Y") %></div>
+          <div class="transaction-date">
+            <%= t.date.strftime("%d.%m.%Y") %>
+            <% if t.note.present? %> · <%= t.note %><% end %>
+          </div>
         </div>
-        <div class="transaction-amount <%= t.transaction_type %>">
-          <%= t.transaction_type == 'income' ? '+' : '−' %>
-          <%= number_to_currency(t.amount, unit: "₽", precision: 0) %>
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <div class="transaction-amount <%= t.transaction_type %>">
+            <%= t.transaction_type == 'income' ? '+' : '−' %>
+            <%= number_to_currency(t.amount, unit: "₽", precision: 0) %>
+          </div>
+          <div class="transaction-actions">
+            <%= link_to "✎", edit_transaction_path(t), class: "action-btn" %>
+            <%= button_to "✕", transaction_path(t), method: :delete, 
+                class: "action-btn delete", 
+                form: { style: "display: inline;" },
+                data: { confirm: "Удалить транзакцию?" } %>
+          </div>
         </div>
       </div>
     <% end %>
   </div>
 <% else %>
   <div class="card">
-    <p style="color: var(--text-muted);">Пока нет транзакций. Добавьте первую!</p>
+    <p style="color: var(--text-muted);">Нет транзакций за этот период.</p>
   </div>
 <% end %>
 
-<h3>Расходы по категориям</h3>
 <% if @expenses_by_category.any? %>
+  <h3>Расходы по категориям</h3>
   <div class="card">
     <% @expenses_by_category.each do |cat, amount| %>
       <div class="transaction-item">
@@ -40,9 +60,5 @@
         <div class="transaction-amount expense"><%= number_to_currency(amount, unit: "₽", precision: 0) %></div>
       </div>
     <% end %>
-  </div>
-<% else %>
-  <div class="card">
-    <p style="color: var(--text-muted);">Нет расходов.</p>
   </div>
 <% end %>

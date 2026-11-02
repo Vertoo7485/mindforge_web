@@ -3,8 +3,8 @@ Rails.application.routes.draw do
 
   root "dashboard#index"
   get "dashboard", to: "dashboard#index"
-  
+
+  resources :transactions, only: [:new, :create, :edit, :update, :destroy], controller: 'finance'
   get "finance", to: "finance#index"
   get "finance/new", to: "finance#new"
-  post "finance", to: "finance#create"
 end
