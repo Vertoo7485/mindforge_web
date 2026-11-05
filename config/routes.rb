@@ -1,4 +1,11 @@
 Rails.application.routes.draw do
+  get 'debts/index'
+  get 'debts/new'
+  get 'debts/create'
+  get 'debts/edit'
+  get 'debts/update'
+  get 'debts/destroy'
+  get 'debts/pay'
   get 'savings_goals/index'
   get 'savings_goals/new'
   get 'savings_goals/create'
@@ -24,6 +31,12 @@ Rails.application.routes.draw do
   resources :savings_goals, only: [:index, :new, :create, :edit, :update, :destroy] do
     member do
       post :deposit
+    end
+  end
+
+  resources :debts, only: [:index, :new, :create, :edit, :update, :destroy] do
+    member do
+      post :pay
     end
   end
 end

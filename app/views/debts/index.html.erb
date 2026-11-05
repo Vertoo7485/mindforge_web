@@ -1,0 +1,82 @@
+<h1>Долги</h1>
+
+<% if @debts.any? %>
+  <div class="card balance-card" style="border-color: var(--red); margin-bottom: 24px;">
+    <div class="balance-label">Общий долг</div>
+    <div class="balance-amount" style="color: var(--red); text-shadow: 0 0 30px rgba(225,85,84,0.5);">
+      <%= number_to_currency(@total_debt, unit: "₽", precision: 0) %>
+    </div>
+    <div style="margin-top: 8px; font-size: 14px; color: var(--text-muted);">
+      Погашено: <%= number_to_currency(@total_paid, unit: "₽", precision: 0) %>
+    </div>
+  </div>
+<% end %>
+
+<div style="margin-bottom: 16px;">
+  <%= link_to "+ Новый долг", new_debt_path, class: "btn btn-block" %>
+</div>
+
+<% if @debts.any? %>
+  <% @debts.each do |debt| %>
+    <div class="card">
+      <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
+        <div style="display: flex; gap: 12px; align-items: center;">
+          <div style="font-size: 32px;"><%= debt.icon.presence || '💳' %></div>
+          <div>
+            <div class="transaction-category" style="font-size: 18px;"><%= debt.title %></div>
+            <% if debt.monthly_payment > 0 %>
+              <div class="transaction-date">
+                Платёж: <%= number_to_currency(debt.monthly_payment, unit: "₽", precision: 0) %>/мес
+              </div>
+            <% end %>
+          </div>
+        </div>
+        <div class="transaction-actions">
+          <%= link_to "✎", edit_debt_path(debt), class: "action-btn" %>
+          <%= button_to "✕", debt_path(debt), method: :delete, 
+              class: "action-btn delete", 
+              form: { style: "display: inline;" },
+              data: { confirm: "Удалить долг?" } %>
+        </div>
+      </div>
+
+      <div class="progress-bar" style="height: 12px;">
+        <div class="progress-fill" style="width: <%= debt.percent %>%; background: <%= debt.completed? ? 'var(--green)' : 'var(--red)' %>;"></div>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; margin-top: 8px; font-size: 14px;">
+        <span style="color: var(--text-muted);">
+          <%= number_to_currency(debt.paid_amount, unit: "₽", precision: 0) %> 
+          из <%= number_to_currency(debt.total_amount, unit: "₽", precision: 0) %>
+        </span>
+        <span style="color: <%= debt.completed? ? 'var(--green)' : 'var(--red)' %>; font-weight: bold;">
+          <%= debt.completed? ? '✅ Погашено!' : "#{debt.percent}%" %>
+        </span>
+      </div>
+
+      <% if !debt.completed? %>
+        <% if debt.months_left > 0 %>
+          <div style="margin-top: 8px; font-size: 13px; color: var(--text-muted);">
+            Осталось ≈ <%= debt.months_left %> <%= debt.months_left == 1 ? 'месяц' : debt.months_left < 5 ? 'месяца' : 'месяцев' %> при текущем платеже
+          </div>
+        <% end %>
+        
+        <div style="margin-top: 12px;">
+          <%= form_with url: pay_debt_path(debt), method: :post, local: true, style: "display: flex; gap: 8px;" do |f| %>
+            <%= number_field_tag :amount, nil, placeholder: "Сумма", step: 0.01, min: 0.01, 
+                style: "flex: 1; padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-gold); border-radius: 10px; color: var(--text);" %>
+            <%= submit_tag "Погасить", class: "btn", style: "padding: 10px 16px;" %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+<% else %>
+  <div class="card">
+    <p style="color: var(--text-muted);">Нет долгов. Отлично!</p>
+  </div>
+<% end %>
+
+<div style="margin-top: 16px;">
+  <%= link_to "← Назад к финансам", finance_path, class: "btn btn-secondary btn-block" %>
+</div>
