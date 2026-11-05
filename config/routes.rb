@@ -1,4 +1,14 @@
 Rails.application.routes.draw do
+  get 'habits/create'
+  get 'habits/toggle'
+  get 'habits/destroy'
+  get 'planner/index'
+  get 'planner/new'
+  get 'planner/create'
+  get 'planner/toggle'
+  get 'planner/destroy'
+  get 'consultant/index'
+  get 'consultant/setup'
   get 'analytics/index'
   get 'debts/index'
   get 'debts/new'
@@ -42,4 +52,17 @@ Rails.application.routes.draw do
   end
 
   get "analytics", to: "analytics#index"
+  get "consultant", to: "consultant#index"
+  get "consultant/setup", to: "consultant#setup", as: :setup_consultant
+  post "consultant/save_profile", to: "consultant#save_profile", as: :save_profile_consultant
+
+  get "planner", to: "planner#index"
+  get "planner/new", to: "planner#new", as: :new_task
+  post "planner", to: "planner#create"
+  patch "planner/:id/toggle", to: "planner#toggle", as: :toggle_task
+  delete "planner/:id", to: "planner#destroy", as: :task
+
+  post "habits", to: "habits#create"
+  patch "habits/:id/toggle", to: "habits#toggle", as: :toggle_habit
+  delete "habits/:id", to: "habits#destroy", as: :habit
 end

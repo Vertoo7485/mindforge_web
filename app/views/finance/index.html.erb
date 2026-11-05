@@ -7,6 +7,10 @@
   <%= link_to "Аналитика", analytics_path, class: "btn btn-secondary" %>
 </div>
 
+<div style="margin-bottom: 16px;">
+  <%= link_to "🧙 Консультант", consultant_path, class: "btn", style: "width: 100%;" %>
+</div>
+
 <div class="card balance-card">
   <div class="balance-label">Баланс казны</div>
   <div class="balance-amount"><%= number_to_currency(@balance, unit: "₽", precision: 0) %></div>

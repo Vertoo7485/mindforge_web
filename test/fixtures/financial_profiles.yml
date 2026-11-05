@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  monthly_income: 9.99
+  monthly_expenses: 9.99
+  savings_goal: 9.99
+  risk_level: MyString
+  main_goal: MyString
+  user: one
+
+two:
+  monthly_income: 9.99
+  monthly_expenses: 9.99
+  savings_goal: 9.99
+  risk_level: MyString
+  main_goal: MyString
+  user: two

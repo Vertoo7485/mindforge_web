@@ -1,0 +1,84 @@
+<h1>Финансовый консультант</h1>
+
+<% if @profile.persisted? %>
+  <!-- Профиль заполнен -->
+  <div class="card balance-card" style="border-color: var(--amber);">
+    <div class="balance-label">Здоровье финансов</div>
+    <div class="balance-amount" style="font-size: 56px;"><%= @profile.health_score %><span style="font-size: 24px;">/100</span></div>
+    <div style="margin-top: 8px; font-size: 14px; color: var(--text-muted);">
+      <% if @profile.health_score >= 70 %>
+        Отличное состояние!
+      <% elsif @profile.health_score >= 40 %>
+        Есть куда расти
+      <% else %>
+        Требуется внимание
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Ключевые метрики -->
+  <div class="card">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+      <div>
+        <div class="balance-label">Доход</div>
+        <div style="font-family: 'Cinzel', serif; font-size: 18px; color: var(--green); margin-top: 4px;">
+          <%= number_to_currency(@profile.monthly_income || 0, unit: "₽", precision: 0) %>
+        </div>
+      </div>
+      <div>
+        <div class="balance-label">Расходы</div>
+        <div style="font-family: 'Cinzel', serif; font-size: 18px; color: var(--red); margin-top: 4px;">
+          <%= number_to_currency(@profile.monthly_expenses || 0, unit: "₽", precision: 0) %>
+        </div>
+      </div>
+      <div>
+        <div class="balance-label">Свободно</div>
+        <div style="font-family: 'Cinzel', serif; font-size: 18px; color: var(--primary); margin-top: 4px;">
+          <%= number_to_currency(@profile.disposable_income, unit: "₽", precision: 0) %>
+        </div>
+      </div>
+      <div>
+        <div class="balance-label">Норма сбережений</div>
+        <div style="font-family: 'Cinzel', serif; font-size: 18px; color: var(--amber); margin-top: 4px;">
+          <%= @profile.savings_rate %>%
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Рекомендации -->
+  <h3>Рекомендации</h3>
+  <% if @recommendations.any? %>
+    <% @recommendations.each do |rec| %>
+      <div class="card" style="margin-bottom: 12px;">
+        <div style="display: flex; gap: 12px; align-items: start;">
+          <div style="font-size: 24px;"><%= rec[:icon] %></div>
+          <div>
+            <div style="font-family: 'Cinzel', serif; font-weight: bold; color: var(--primary); margin-bottom: 4px;">
+              <%= rec[:title] %>
+            </div>
+            <div style="font-size: 14px; color: var(--text-muted); line-height: 1.5;">
+              <%= rec[:text] %>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
+
+  <div style="margin-top: 16px;">
+    <%= link_to "Обновить профиль", setup_consultant_path, class: "btn btn-secondary btn-block" %>
+  </div>
+<% else %>
+  <!-- Профиль не заполнен -->
+  <div class="card">
+    <p style="color: var(--text-muted); margin-bottom: 16px;">
+      Ответьте на несколько вопросов — и я дам персональные рекомендации по финансам.
+    </p>
+    <%= link_to "Начать настройку", setup_consultant_path, class: "btn btn-block" %>
+  </div>
+<% end %>
+
+<div style="margin-top: 16px;">
+  <%= link_to "← Назад к финансам", finance_path, class: "btn btn-secondary btn-block" %>
+</div>

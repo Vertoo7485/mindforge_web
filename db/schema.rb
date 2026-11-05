@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_11_05_112418) do
+ActiveRecord::Schema[7.1].define(version: 2026_11_05_114757) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -45,6 +45,36 @@ ActiveRecord::Schema[7.1].define(version: 2026_11_05_112418) do
     t.index ["user_id"], name: "index_debts_on_user_id"
   end
 
+  create_table "financial_profiles", force: :cascade do |t|
+    t.decimal "monthly_income"
+    t.decimal "monthly_expenses"
+    t.decimal "savings_goal"
+    t.string "risk_level"
+    t.string "main_goal"
+    t.bigint "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_financial_profiles_on_user_id"
+  end
+
+  create_table "habit_completions", force: :cascade do |t|
+    t.bigint "habit_id", null: false
+    t.date "date"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["habit_id"], name: "index_habit_completions_on_habit_id"
+  end
+
+  create_table "habits", force: :cascade do |t|
+    t.string "name"
+    t.string "frequency"
+    t.integer "target_count"
+    t.bigint "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_habits_on_user_id"
+  end
+
   create_table "savings_goals", force: :cascade do |t|
     t.string "title"
     t.decimal "target_amount"
@@ -55,6 +85,19 @@ ActiveRecord::Schema[7.1].define(version: 2026_11_05_112418) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_savings_goals_on_user_id"
+  end
+
+  create_table "tasks", force: :cascade do |t|
+    t.string "title"
+    t.text "description"
+    t.string "priority"
+    t.date "due_date"
+    t.boolean "completed"
+    t.string "recurrence"
+    t.bigint "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_tasks_on_user_id"
   end
 
   create_table "transactions", force: :cascade do |t|
@@ -84,6 +127,10 @@ ActiveRecord::Schema[7.1].define(version: 2026_11_05_112418) do
   add_foreign_key "budgets", "users"
   add_foreign_key "categories", "users"
   add_foreign_key "debts", "users"
+  add_foreign_key "financial_profiles", "users"
+  add_foreign_key "habit_completions", "habits"
+  add_foreign_key "habits", "users"
   add_foreign_key "savings_goals", "users"
+  add_foreign_key "tasks", "users"
   add_foreign_key "transactions", "users"
 end

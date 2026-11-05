@@ -1,0 +1,48 @@
+<h1>Настройка профиля</h1>
+
+<div class="card">
+  <%= form_with model: @profile, url: save_profile_consultant_path, method: :post, local: true do |f| %>
+    <% if @profile.errors.any? %>
+      <div class="errors">
+        <% @profile.errors.full_messages.each do |msg| %>
+          <p><%= msg %></p>
+        <% end %>
+      </div>
+    <% end %>
+
+    <div class="form-group">
+      <%= f.label :monthly_income, "Ежемесячный доход (₽)" %>
+      <%= f.number_field :monthly_income, step: 0.01, placeholder: "Например: 80000" %>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :monthly_expenses, "Ежемесячные расходы (₽)" %>
+      <%= f.number_field :monthly_expenses, step: 0.01, placeholder: "Например: 50000" %>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :savings_goal, "Цель накоплений (₽)" %>
+      <%= f.number_field :savings_goal, step: 0.01, placeholder: "Например: 300000" %>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :main_goal, "Главная финансовая цель" %>
+      <%= f.text_field :main_goal, placeholder: "Например: подушка безопасности" %>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :risk_level, "Отношение к риску" %>
+      <%= f.select :risk_level, [
+        ["Консервативное — надёжность важнее", "low"],
+        ["Сбалансированное — умеренный риск", "medium"],
+        ["Агрессивное — готов к риску", "high"]
+      ], { include_blank: "Выберите..." } %>
+    </div>
+
+    <%= f.submit "Сохранить профиль", class: "btn btn-block" %>
+  <% end %>
+</div>
+
+<div style="margin-top: 16px;">
+  <%= link_to "← Назад", consultant_path, class: "btn btn-secondary btn-block" %>
+</div>

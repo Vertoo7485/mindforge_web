@@ -1,0 +1,141 @@
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+  <h1 style="margin: 0;"><%= @date == Date.today ? "Сегодня" : @date.strftime("%d.%m.%Y") %></h1>
+</div>
+
+<!-- Выбор даты -->
+<div class="filters" style="margin-bottom: 16px;">
+  <%= link_to "←", planner_path(date: @date - 1.day), class: "filter-btn", style: "flex: 0 0 48px;" %>
+  <%= form_with url: planner_path, method: :get, local: true, style: "flex: 1;" do |f| %>
+    <%= date_field_tag :date, @date, onchange: "this.form.submit()", 
+        style: "width: 100%; padding: 10px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-family: 'Cinzel', serif; font-size: 13px;" %>
+  <% end %>
+  <%= link_to "→", planner_path(date: @date + 1.day), class: "filter-btn", style: "flex: 0 0 48px;" %>
+</div>
+
+<div class="filters" style="margin-bottom: 16px;">
+  <%= link_to "Вчера", planner_path(date: @date - 1.day), class: "filter-btn" %>
+  <%= link_to "Сегодня", planner_path, class: "filter-btn #{'active' if @date == Date.today}" %>
+  <%= link_to "Завтра", planner_path(date: @date + 1.day), class: "filter-btn" %>
+</div>
+
+<!-- Прогресс дня -->
+<% if @total_tasks > 0 %>
+  <div class="card" style="border-color: <%= @completed_today == @total_tasks ? 'var(--green)' : 'var(--amber)' %>;">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <span class="balance-label" style="margin: 0;">Прогресс дня</span>
+      <span style="font-family: 'Cinzel', serif; font-weight: bold; color: <%= @completed_today == @total_tasks ? 'var(--green)' : 'var(--amber)' %>;">
+        <%= @completed_today %> / <%= @total_tasks %>
+      </span>
+    </div>
+    <div class="progress-bar" style="margin-top: 8px;">
+      <div class="progress-fill" style="width: <%= (@completed_today.to_f / @total_tasks * 100).round %>%; background: <%= @completed_today == @total_tasks ? 'var(--green)' : 'var(--amber)' %>;"></div>
+    </div>
+  </div>
+<% end %>
+
+<!-- Задачи -->
+<h3>Задачи</h3>
+<div style="margin-bottom: 16px;">
+  <%= link_to "+ Новая задача", new_task_path(date: @date), class: "btn btn-block" %>
+</div>
+
+<% if @tasks.any? %>
+  <div class="card">
+    <% @tasks.each do |task| %>
+      <div class="transaction-item" style="align-items: flex-start;">
+        <div style="display: flex; gap: 12px; align-items: flex-start; flex: 1;">
+          <%= button_to toggle_task_path(task), method: :patch, 
+              class: "action-btn", 
+              form: { style: "display: inline;" },
+              style: "flex-shrink: 0; font-size: 18px; #{task.completed ? 'color: var(--green); border-color: var(--green);' : ''}" do %>
+            <%= task.completed ? "✓" : "○" %>
+          <% end %>
+          <div style="flex: 1;">
+            <div style="font-family: 'Cinzel', serif; font-size: 15px; <%= 'text-decoration: line-through; opacity: 0.5;' if task.completed %>">
+              <%= task.title %>
+            </div>
+            <% if task.description.present? %>
+              <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;"><%= task.description %></div>
+            <% end %>
+            <div style="display: flex; gap: 8px; margin-top: 4px; align-items: center;">
+              <span style="font-size: 10px; padding: 2px 8px; border-radius: 8px; background: <%= task.priority_color %>; color: #000; font-weight: bold;">
+                <%= task.priority_label %>
+              </span>
+              <% if task.recurrence.present? %>
+                <span style="font-size: 11px; color: var(--text-muted);">
+                  🔄 <%= { 'daily' => 'каждый день', 'weekdays' => 'будни', 'weekends' => 'выходные' }[task.recurrence] || task.recurrence %>
+                </span>
+              <% end %>
+            </div>
+          </div>
+        </div>
+        <div class="transaction-actions" style="margin-left: 8px;">
+          <%= button_to "✕", task_path(task), method: :delete, 
+              class: "action-btn delete", 
+              form: { style: "display: inline;" },
+              data: { confirm: "Удалить задачу?" } %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% else %>
+  <div class="card">
+    <p style="color: var(--text-muted);">Нет задач на этот день.</p>
+  </div>
+<% end %>
+
+<!-- Привычки -->
+<h3>Привычки</h3>
+<div style="margin-bottom: 16px;">
+  <%= form_with url: habits_path, method: :post, local: true do |f| %>
+    <div style="display: flex; gap: 8px;">
+      <%= text_field_tag 'habit[name]', nil, placeholder: "Новая привычка...", required: true,
+          style: "flex: 1; padding: 12px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-gold); border-radius: 10px; color: var(--text);" %>
+      <%= submit_tag "+", class: "btn", style: "padding: 12px 20px;" %>
+    </div>
+  <% end %>
+</div>
+
+<% if @habits.any? %>
+  <% @habits.each do |habit| %>
+    <% completed = habit.completed_on?(@date) %>
+    <div class="card" style="<%= 'border-color: var(--green);' if completed %>">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <div style="font-family: 'Cinzel', serif; font-size: 15px;"><%= habit.name %></div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <% if habit.streak > 0 %>
+            <span style="font-size: 12px; color: var(--amber);">🔥 <%= habit.streak %></span>
+          <% end %>
+          <%= button_to toggle_habit_path(habit, date: @date), method: :patch,
+              class: "action-btn",
+              form: { style: "display: inline;" },
+              style: "font-size: 18px; #{completed ? 'color: var(--green); border-color: var(--green);' : ''}" do %>
+            <%= completed ? "✓" : "○" %>
+          <% end %>
+          <%= button_to "✕", habit_path(habit), method: :delete,
+              class: "action-btn delete",
+              form: { style: "display: inline;" },
+              data: { confirm: "Удалить привычку?" } %>
+        </div>
+      </div>
+      <!-- Недельный прогресс -->
+      <div style="display: flex; justify-content: space-between; gap: 4px;">
+        <% (0..6).each do |i| %>
+          <% day = @date.beginning_of_week + i.days %>
+          <% done = habit.completed_on?(day) %>
+          <% is_today = day == @date %>
+          <div style="flex: 1; text-align: center;">
+            <div style="font-size: 9px; color: var(--text-muted); margin-bottom: 2px;"><%= %w[Пн Вт Ср Чт Пт Сб Вс][i] %></div>
+            <div style="width: 100%; aspect-ratio: 1; max-width: 28px; margin: 0 auto; border-radius: 50%; background: <%= done ? 'rgba(78,205,196,0.3)' : 'rgba(0,0,0,0.3)' %>; border: 2px solid <%= done ? 'var(--green)' : is_today ? 'var(--amber)' : 'var(--border)' %>; display: flex; align-items: center; justify-content: center; font-size: 12px;">
+              <%= done ? "✓" : "" %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+<% else %>
+  <div class="card">
+    <p style="color: var(--text-muted);">Нет привычек. Добавьте первую выше!</p>
+  </div>
+<% end %>
