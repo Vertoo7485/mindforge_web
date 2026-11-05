@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get 'analytics/index'
   get 'debts/index'
   get 'debts/new'
   get 'debts/create'
@@ -39,4 +40,6 @@ Rails.application.routes.draw do
       post :pay
     end
   end
+
+  get "analytics", to: "analytics#index"
 end
