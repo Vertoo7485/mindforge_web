@@ -1,0 +1,57 @@
+<h1><%= @program.name %></h1>
+
+<div class="card">
+  <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 4px;">
+    <%= @program.level_label %> · <%= @program_exercises.count %> упражнений
+  </p>
+  <% if @program.description.present? %>
+    <p style="font-size: 14px; color: var(--text-muted);"><%= @program.description %></p>
+  <% end %>
+</div>
+
+<h3>Упражнения</h3>
+
+<% @program_exercises.each_with_index do |pe, index| %>
+  <div class="card" style="padding: 16px;">
+    <div style="display: flex; justify-content: space-between; align-items: start;">
+      <div style="display: flex; gap: 12px; align-items: start;">
+        <div style="font-family: 'Cinzel', serif; color: var(--amber); font-size: 18px; min-width: 24px;"><%= index + 1 %></div>
+        <div>
+          <div style="font-family: 'Cinzel', serif; font-size: 15px;"><%= pe.exercise.name %></div>
+          <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">
+            <%= pe.exercise.muscle_group_label %>
+          </div>
+          <div style="margin-top: 6px; display: flex; gap: 12px; font-size: 13px;">
+            <span>Подходы: <strong><%= pe.sets %></strong></span>
+            <span>Повторения: <strong><%= pe.reps %></strong></span>
+            <% if pe.weight.to_f > 0 %>
+              <span>Вес: <strong><%= pe.weight.to_i %> кг</strong></span>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<!-- Кнопка завершения -->
+<% if @program.is_template? %>
+  <div style="margin-top: 16px;">
+    <%= button_to "Взять себе эту программу", copy_workout_path(@program), method: :post, class: "btn btn-block" %>
+  </div>
+<% else %>
+  <div style="margin-top: 16px;">
+    <%= form_with url: workout_logs_path, local: true do |f| %>
+      <%= hidden_field_tag :workout_program_id, @program.id %>
+      <div style="display: flex; gap: 8px;">
+        <%= number_field_tag :duration_minutes, 60, min: 1, 
+            style: "flex: 1; padding: 12px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-gold); border-radius: 10px; color: var(--text);" %>
+        <%= submit_tag "Завершить тренировку", class: "btn", style: "flex: 2;" %>
+      </div>
+    <% end %>
+  </div>
+<% end %>
+
+<div style="margin-top: 16px;">
+  <%= link_to "← Назад", workouts_path, class: "btn btn-secondary btn-block" %>
+</div>

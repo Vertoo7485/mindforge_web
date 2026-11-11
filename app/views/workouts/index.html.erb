@@ -1,0 +1,69 @@
+<h1>Тренировки</h1>
+
+<!-- Мои программы -->
+<h3>Мои программы</h3>
+<% if @my_programs.any? %>
+  <% @my_programs.each do |program| %>
+    <div class="card">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <div style="font-family: 'Cinzel', serif; font-size: 16px;"><%= program.name %></div>
+          <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">
+            <%= program.level_label %> · <%= program.program_exercises.count %> упражнений
+          </div>
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <%= link_to "▶", workout_path(program), class: "action-btn", style: "text-decoration: none;" %>
+          <%= button_to "✕", workout_path(program), method: :delete, 
+              class: "action-btn delete", 
+              form: { style: "display: inline;" },
+              data: { confirm: "Удалить программу?" } %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+<% else %>
+  <div class="card">
+    <p style="color: var(--text-muted);">Нет своих программ. Создайте или скопируйте шаблон ниже.</p>
+  </div>
+<% end %>
+
+<div style="margin-bottom: 24px;">
+  <%= link_to "+ Создать программу", new_workout_path, class: "btn btn-block" %>
+</div>
+
+<!-- Готовые шаблоны -->
+<h3>Готовые программы</h3>
+<% @templates.each do |template| %>
+  <div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
+      <div>
+        <div style="font-family: 'Cinzel', serif; font-size: 16px; color: var(--amber);"><%= template.name %></div>
+        <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">
+          <%= template.level_label %> · <%= template.program_exercises.count %> упражнений
+        </div>
+      </div>
+    </div>
+    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;"><%= template.description %></p>
+    <div style="display: flex; gap: 8px;">
+      <%= link_to "Посмотреть", workout_path(template), class: "btn btn-secondary", style: "flex: 1;" %>
+      <%= button_to "Взять себе", copy_workout_path(template), method: :post, class: "btn", style: "flex: 1;" %>
+    </div>
+  </div>
+<% end %>
+
+<!-- История -->
+<% if @recent_logs.any? %>
+  <h3>Последние тренировки</h3>
+  <div class="card">
+    <% @recent_logs.each do |log| %>
+      <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border);">
+        <div>
+          <div style="font-size: 14px;"><%= log.workout_program.name %></div>
+          <div style="font-size: 12px; color: var(--text-muted);"><%= log.date.strftime("%d.%m.%Y") %></div>
+        </div>
+        <div style="font-size: 13px; color: var(--amber);">+15 XP</div>
+      </div>
+    <% end %>
+  </div>
+<% end %>

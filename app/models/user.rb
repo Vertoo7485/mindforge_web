@@ -13,6 +13,9 @@ class User < ApplicationRecord
   has_one :character, dependent: :destroy
   has_many :user_achievements, dependent: :destroy
   has_many :achievements, through: :user_achievements
+  has_many :exercises, dependent: :destroy
+  has_many :workout_programs, dependent: :destroy
+  has_many :workout_logs, dependent: :destroy
 
   def character
     super || create_character(level: 1, xp: 0, xp_to_next_level: 100, coins: 0)

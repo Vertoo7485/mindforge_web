@@ -1,4 +1,11 @@
 Rails.application.routes.draw do
+  get 'workout_logs/create'
+  get 'workouts/index'
+  get 'workouts/show'
+  get 'workouts/new'
+  get 'workouts/create'
+  get 'workouts/copy'
+  get 'workouts/destroy'
   get 'character/index'
   get 'habits/create'
   get 'habits/toggle'
@@ -68,4 +75,12 @@ Rails.application.routes.draw do
   delete "habits/:id", to: "habits#destroy", as: :habit
 
   get "character", to: "character#index"
+
+  resources :workouts, only: [:index, :show, :new, :create, :destroy] do
+    member do
+      post :copy
+    end
+  end
+
+  resources :workout_logs, only: [:create]
 end

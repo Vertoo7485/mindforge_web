@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_11_11_093507) do
+ActiveRecord::Schema[7.1].define(version: 2026_11_11_095103) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -66,6 +66,15 @@ ActiveRecord::Schema[7.1].define(version: 2026_11_11_093507) do
     t.index ["user_id"], name: "index_debts_on_user_id"
   end
 
+  create_table "exercises", force: :cascade do |t|
+    t.string "name"
+    t.string "muscle_group"
+    t.bigint "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_exercises_on_user_id"
+  end
+
   create_table "financial_profiles", force: :cascade do |t|
     t.decimal "monthly_income"
     t.decimal "monthly_expenses"
@@ -94,6 +103,19 @@ ActiveRecord::Schema[7.1].define(version: 2026_11_11_093507) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_habits_on_user_id"
+  end
+
+  create_table "program_exercises", force: :cascade do |t|
+    t.bigint "workout_program_id", null: false
+    t.bigint "exercise_id", null: false
+    t.integer "sets"
+    t.integer "reps"
+    t.decimal "weight"
+    t.integer "order_index"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["exercise_id"], name: "index_program_exercises_on_exercise_id"
+    t.index ["workout_program_id"], name: "index_program_exercises_on_workout_program_id"
   end
 
   create_table "savings_goals", force: :cascade do |t|
@@ -154,16 +176,44 @@ ActiveRecord::Schema[7.1].define(version: 2026_11_11_093507) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  create_table "workout_logs", force: :cascade do |t|
+    t.bigint "workout_program_id", null: false
+    t.bigint "user_id", null: false
+    t.date "date"
+    t.integer "duration_minutes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_workout_logs_on_user_id"
+    t.index ["workout_program_id"], name: "index_workout_logs_on_workout_program_id"
+  end
+
+  create_table "workout_programs", force: :cascade do |t|
+    t.string "name"
+    t.text "description"
+    t.bigint "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.boolean "is_template", default: false
+    t.string "level", default: "beginner"
+    t.index ["user_id"], name: "index_workout_programs_on_user_id"
+  end
+
   add_foreign_key "budgets", "users"
   add_foreign_key "categories", "users"
   add_foreign_key "characters", "users"
   add_foreign_key "debts", "users"
+  add_foreign_key "exercises", "users"
   add_foreign_key "financial_profiles", "users"
   add_foreign_key "habit_completions", "habits"
   add_foreign_key "habits", "users"
+  add_foreign_key "program_exercises", "exercises"
+  add_foreign_key "program_exercises", "workout_programs"
   add_foreign_key "savings_goals", "users"
   add_foreign_key "tasks", "users"
   add_foreign_key "transactions", "users"
   add_foreign_key "user_achievements", "achievements"
   add_foreign_key "user_achievements", "users"
+  add_foreign_key "workout_logs", "users"
+  add_foreign_key "workout_logs", "workout_programs"
+  add_foreign_key "workout_programs", "users"
 end
