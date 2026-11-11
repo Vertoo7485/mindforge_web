@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get 'character/index'
   get 'habits/create'
   get 'habits/toggle'
   get 'habits/destroy'
@@ -65,4 +66,6 @@ Rails.application.routes.draw do
   post "habits", to: "habits#create"
   patch "habits/:id/toggle", to: "habits#toggle", as: :toggle_habit
   delete "habits/:id", to: "habits#destroy", as: :habit
+
+  get "character", to: "character#index"
 end

@@ -1,5 +1,6 @@
 class SavingsGoal < ApplicationRecord
   belongs_to :user
+  after_create :unlock_achievement_for_goal
 
   validates :title, presence: true
   validates :target_amount, presence: true, numericality: { greater_than: 0 }
@@ -16,5 +17,13 @@ class SavingsGoal < ApplicationRecord
 
   def completed?
     current_amount >= target_amount
+  end
+
+  private
+
+  def unlock_achievement_for_goal
+    achievement = Achievement.find_by(title: 'Накопитель')
+    return unless achievement
+    UserAchievement.find_or_create_by(user: user, achievement: achievement)
   end
 end

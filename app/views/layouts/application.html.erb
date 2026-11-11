@@ -39,10 +39,10 @@
           <span class="nav-rune">ᚨ</span>
           <span>План</span>
         <% end %>
-        <a href="#" class="nav-item">
+        <%= link_to character_path, class: "nav-item #{'active' if current_page?(character_path)}" do %>
           <span class="nav-rune">ᛏ</span>
           <span>Герой</span>
-        </a>
+        <% end %>
       </nav>
     <% end %>
   </body>

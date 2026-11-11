@@ -1,5 +1,6 @@
 class Debt < ApplicationRecord
   belongs_to :user
+  after_update :check_paid_off, if: :saved_change_to_paid_amount?
 
   validates :title, presence: true
   validates :total_amount, presence: true, numericality: { greater_than: 0 }
@@ -31,5 +32,14 @@ class Debt < ApplicationRecord
     return months_before if new_remaining <= 0
     months_after = (new_remaining / monthly_payment).ceil
     [months_before - months_after, 0].max
+  end
+
+  private
+
+  def check_paid_off
+    return unless completed?
+    achievement = Achievement.find_by(title: 'Борец с долгами')
+    return unless achievement
+    UserAchievement.find_or_create_by(user: user, achievement: achievement)
   end
 end

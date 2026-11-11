@@ -1,2 +1,64 @@
-<h1>Dashboard#index</h1>
-<p>Find me in app/views/dashboard/index.html.erb</p>
+<% character = current_user.character %>
+
+<h1>Mind Forge</h1>
+
+<!-- Прогресс персонажа -->
+<div class="card" style="text-align: center;">
+  <div style="font-size: 42px; margin-bottom: 8px;">⚔️</div>
+  <div style="font-family: 'Cinzel', serif; font-size: 20px; color: var(--amber); margin-bottom: 4px;">
+    Уровень <%= character.level %>
+  </div>
+  <div style="font-size: 14px; color: var(--text-muted);">
+    <%= character.rank %> · 🪙 <%= character.coins %>
+  </div>
+  <div class="progress-bar" style="margin-top: 12px;">
+    <div class="progress-fill" style="width: <%= character.xp_percent %>%; background: linear-gradient(90deg, var(--amber), #ffd700);"></div>
+  </div>
+  <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">
+    <%= character.xp %> / <%= character.xp_to_next_level %> XP
+  </div>
+</div>
+
+<!-- Быстрые ссылки -->
+<h3>Разделы</h3>
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+  <%= link_to "💰 Финансы", finance_path, class: "btn btn-secondary" %>
+  <%= link_to "📋 Планер", planner_path, class: "btn btn-secondary" %>
+  <%= link_to "⚔️ Персонаж", character_path, class: "btn btn-secondary" %>
+  <%= link_to "🏋️ Тренировки", "#", class: "btn btn-secondary" %>
+</div>
+
+<!-- Статистика -->
+<h3>Статистика</h3>
+<div class="card">
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+    <div>
+      <div class="balance-label">Задач выполнено</div>
+      <div style="font-family: 'Cinzel', serif; font-size: 20px; color: var(--primary);">
+        <%= current_user.tasks.where(completed: true).count %>
+      </div>
+    </div>
+    <div>
+      <div class="balance-label">Транзакций</div>
+      <div style="font-family: 'Cinzel', serif; font-size: 20px; color: var(--primary);">
+        <%= current_user.transactions.count %>
+      </div>
+    </div>
+    <div>
+      <div class="balance-label">Привычек</div>
+      <div style="font-family: 'Cinzel', serif; font-size: 20px; color: var(--primary);">
+        <%= current_user.habits.count %>
+      </div>
+    </div>
+    <div>
+      <div class="balance-label">Достижений</div>
+      <div style="font-family: 'Cinzel', serif; font-size: 20px; color: var(--primary);">
+        <%= current_user.achievements.count %> / <%= Achievement.count %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="margin-top: 24px;">
+  <%= button_to "Выйти", destroy_user_session_path, method: :delete, class: "btn btn-secondary btn-block" %>
+</div>

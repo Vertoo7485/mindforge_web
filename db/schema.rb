@@ -10,9 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_11_05_114757) do
+ActiveRecord::Schema[7.1].define(version: 2026_11_11_093507) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "achievements", force: :cascade do |t|
+    t.string "title"
+    t.string "description"
+    t.string "icon"
+    t.string "condition_type"
+    t.integer "condition_value"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "budgets", force: :cascade do |t|
     t.string "category"
@@ -31,6 +41,17 @@ ActiveRecord::Schema[7.1].define(version: 2026_11_05_114757) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_categories_on_user_id"
+  end
+
+  create_table "characters", force: :cascade do |t|
+    t.integer "level"
+    t.integer "xp"
+    t.integer "xp_to_next_level"
+    t.integer "coins"
+    t.bigint "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_characters_on_user_id"
   end
 
   create_table "debts", force: :cascade do |t|
@@ -112,6 +133,15 @@ ActiveRecord::Schema[7.1].define(version: 2026_11_05_114757) do
     t.index ["user_id"], name: "index_transactions_on_user_id"
   end
 
+  create_table "user_achievements", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "achievement_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["achievement_id"], name: "index_user_achievements_on_achievement_id"
+    t.index ["user_id"], name: "index_user_achievements_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -126,6 +156,7 @@ ActiveRecord::Schema[7.1].define(version: 2026_11_05_114757) do
 
   add_foreign_key "budgets", "users"
   add_foreign_key "categories", "users"
+  add_foreign_key "characters", "users"
   add_foreign_key "debts", "users"
   add_foreign_key "financial_profiles", "users"
   add_foreign_key "habit_completions", "habits"
@@ -133,4 +164,6 @@ ActiveRecord::Schema[7.1].define(version: 2026_11_05_114757) do
   add_foreign_key "savings_goals", "users"
   add_foreign_key "tasks", "users"
   add_foreign_key "transactions", "users"
+  add_foreign_key "user_achievements", "achievements"
+  add_foreign_key "user_achievements", "users"
 end
